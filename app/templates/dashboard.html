@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Dashboard Premium con Video de Fondo -->
+<div class="relative min-h-screen overflow-hidden">
+  <!-- Video de fondo a pantalla completa -->
+  <div class="fixed inset-0 -z-10">
+    <iframe
+      src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&fs=0"
+      class="absolute inset-0 w-full h-full object-cover scale-110"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <!-- Overlay oscuro para mejor legibilidad -->
+  <div class="fixed inset-0 bg-black/70 -z-10"></div>
+
+  <!-- Contenido principal -->
+  <div class="relative z-10 py-16 px-6 md:px-10">
+    <div class="max-w-7xl mx-auto">
+      <!-- Fecha actual destacada -->
+      <div class="text-center mb-16">
+        <p class="text-5xl md:text-6xl font-black text-white drop-shadow-2xl">
+          {{ fecha_actual }}
+        </p>
+        <p class="text-3xl md:text-4xl text-cyan-300 mt-6 drop-shadow-lg font-bold">
+          Sistema Profesional • Huatusco, Veracruz
+        </p>
+      </div>
+
+      <!-- Tarjetas interactivas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <!-- Clientes -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-10 text-center border border-white/20 shadow-2xl 
+                    transition-all duration-500 hover:bg-white/20 hover:scale-105 hover:shadow-cyan-500/30">
+          <i data-feather="users" class="w-32 h-32 mx-auto text-cyan-400 mb-6 drop-shadow-2xl"></i>
+          <p class="text-2xl font-bold text-white/90">Clientes Registrados</p>
+          <p class="text-6xl md:text-7xl font-black text-white mt-8 drop-shadow-2xl">
+            {{ clientes }}
+          </p>
+        </div>
+
+        <!-- Ventas -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-10 text-center border border-white/20 shadow-2xl 
+                    transition-all duration-500 hover:bg-white/20 hover:scale-105 hover:shadow-cyan-500/30">
+          <i data-feather="shopping-cart" class="w-32 h-32 mx-auto text-blue-400 mb-6 drop-shadow-2xl"></i>
+          <p class="text-2xl font-bold text-white/90">Ventas Realizadas</p>
+          <p class="text-6xl md:text-7xl font-black text-white mt-8 drop-shadow-2xl">
+            {{ ventas }}
+          </p>
+        </div>
+
+        <!-- Ingresos -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-10 text-center border border-white/20 shadow-2xl 
+                    transition-all duration-500 hover:bg-white/20 hover:scale-105 hover:shadow-cyan-500/30">
+          <i data-feather="dollar-sign" class="w-32 h-32 mx-auto text-emerald-400 mb-6 drop-shadow-2xl"></i>
+          <p class="text-2xl font-bold text-white/90">Ingresos Totales</p>
+          <p class="text-5xl md:text-6xl font-black text-white mt-8 drop-shadow-2xl">
+            ${{ "{:,.0f}".format(ingresos) }}
+          </p>
+        </div>
+
+        <!-- Pendientes -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-10 text-center border border-white/20 shadow-2xl 
+                    transition-all duration-500 hover:bg-white/20 hover:scale-105 hover:shadow-cyan-500/30">
+          <i data-feather="alert-circle" class="w-32 h-32 mx-auto text-orange-400 mb-6 drop-shadow-2xl"></i>
+          <p class="text-2xl font-bold text-white/90">Pendientes de Cobro</p>
+          <p class="text-6xl md:text-7xl font-black text-white mt-8 drop-shadow-2xl">
+            {{ pendientes }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Mensaje motivador final -->
+      <div class="text-center mt-20 pb-10">
+        <p class="text-5xl md:text-6xl font-black text-white drop-shadow-2xl">
+          ¡Tu negocio avanza con fuerza!
+        </p>
+        <p class="text-3xl md:text-4xl text-cyan-300 mt-8 drop-shadow-lg font-bold">
+          Cada día un paso más hacia el éxito
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inicializar iconos Feather -->
+<script>
+  feather.replace();
+</script>
+{% endblock %}

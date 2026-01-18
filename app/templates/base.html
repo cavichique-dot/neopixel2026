@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <title>NEOPIXEL 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="{{ url_for('static', filename='ico.png') }}" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    .sidebar-link:hover { background: rgba(6, 182, 212, 0.15); }
+    .sidebar-link.active { background: rgba(6, 182, 212, 0.3); border-left: 4px solid #06b6d4; }
+    .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="h-full bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#1e293b] text-white flex">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 glass border-r border-slate-800 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+    <div class="flex flex-col h-full">
+      <div class="p-8 text-center border-b border-slate-700">
+        <img src="{{ url_for('static', filename='neopixel_lOGIN.png') }}" class="w-48 mx-auto rounded-2xl shadow-2xl">
+        <h2 class="text-2xl font-black text-cyan-400 mt-4">NEOPIXEL 2026</h2>
+      </div>
+      <nav class="flex-1 p-6">
+        <ul class="space-y-3">
+          <li>
+            <a href="/" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold transition-all {% if request.path == '/' %}active{% endif %}">
+              <i data-feather="home" class="w-6 h-6"></i>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/clientes" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold transition-all {% if request.path.startswith('/clientes') %}active{% endif %}">
+              <i data-feather="users" class="w-6 h-6"></i>
+              Clientes
+            </a>
+          </li>
+          <li>
+            <a href="/productos" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold transition-all {% if request.path.startswith('/productos') %}active{% endif %}">
+              <i data-feather="package" class="w-6 h-6"></i>
+              Productos
+            </a>
+          </li>
+          <li>
+            <a href="/venta/nueva" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold transition-all">
+              <i data-feather="plus-circle" class="w-6 h-6"></i>
+              Nueva Venta
+            </a>
+          </li>
+          <li>
+            <a href="/ventas" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold transition-all {% if request.path.startswith('/ventas') or request.path.startswith('/venta/') and not request.path.startswith('/venta/nueva') %}active{% endif %}">
+              <i data-feather="shopping-cart" class="w-6 h-6"></i>
+              Ventas
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="p-6 border-t border-slate-700">
+        <a href="/logout" class="flex items-center gap-4 px-6 py-4 rounded-xl text-lg font-bold text-red-400 hover:bg-red-900/30 transition-all">
+          <i data-feather="log-out" class="w-6 h-6"></i>
+          Cerrar Sesión
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col lg:ml-64">
+    <!-- Header superior -->
+    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-700 px-6 py-4">
+      <div class="flex justify-between items-center">
+        <button id="menuToggle" class="lg:hidden p-3 rounded-xl hover:bg-slate-800 transition">
+          <i data-feather="menu" class="w-8 h-8"></i>
+        </button>
+        <div class="text-right">
+          <p class="text-cyan-300 font-bold text-lg">Bienvenido de vuelta</p>
+          <p class="text-gray-400">Huatusco, Veracruz • México</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="px-6 mt-6">
+          {% for category, msg in messages %}
+            <div class="p-5 rounded-xl text-center font-bold text-xl mb-4 {% if category == 'success' %}bg-emerald-600/80{% else %}bg-red-600/80{% endif %} backdrop-blur">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Contenido principal -->
+    <main class="flex-1 p-6 md:p-10">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer actualizado: sin texto grande, logo neopixel_lOGIN.png y datos limpios -->
+    <footer class="bg-slate-900/90 backdrop-blur border-t border-slate-700 py-10 text-center">
+      <div class="max-w-4xl mx-auto">
+        <img src="{{ url_for('static', filename='neopixel_lOGIN.png') }}" 
+             class="w-40 mx-auto mb-6 rounded-2xl shadow-2xl">
+        <div class="text-gray-300 space-y-2 mt-6">
+          <p class="text-lg">Calle Sur 11 #221 entre Avs 1 y 3</p>
+          <p class="text-lg">Huatusco, Veracruz, México</p>
+          <p class="text-xl font-bold text-cyan-300">Tel: +52 273 120 8373</p>
+        </div>
+        <p class="text-gray-500 mt-10 text-sm">© 2026 • Hecho con pasión en México</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Script para menú móvil + icons -->
+  <script>
+    feather.replace();
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Ticket #{{ venta.id }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f0f4f8;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    /* Ancho más ajustado para móvil: 380px máximo (ideal para pantallas pequeñas) */
+    .ticket {
+      width: 380px;
+      max-width: 100%;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+    .header {
+      background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+    }
+    .header-logo {
+      width: 240px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .header-folio {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .header-date {
+      font-size: 22px;
+      font-weight: 600;
+      color: white;
+    }
+    .qr-container {
+      background: white;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 2px solid #e0e7ff;
+      position: absolute;
+      top: 30px;
+      right: 30px;
+    }
+    .qr-img {
+      width: 100px;
+      height: 100px;
+    }
+    .body {
+      padding: 30px 35px;
+    }
+    .cliente-nombre {
+      background: linear-gradient(to right, #dbeafe, #eff6ff);
+      border-left: 6px solid #3b82f6;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+      font-size: 32px;
+      font-weight: 900;
+      color: #1e3a8a;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin: 30px 0;
+    }
+    th {
+      text-align: left;
+      padding: 12px 0;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 16px;
+      border-bottom: 2px solid #dbeafe;
+    }
+    td {
+      padding: 18px 14px;
+      background: #f8fafc;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .text-right { text-align: right; }
+    .total-row {
+      font-size: 36px;
+      font-weight: 900;
+      color: #1e3a8a;
+      background: linear-gradient(to right, #dbeafe, #bfdbfe);
+      border-radius: 20px;
+      padding: 25px !important;
+    }
+    .status-paid { color: #10b981; font-size: 30px; font-weight: 900; }
+    .status-pending { color: #f59e0b; font-size: 30px; font-weight: 900; }
+    .metodo-pago {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e40af;
+      margin: 25px 0;
+      text-align: center;
+    }
+    .abonos-list {
+      margin: 25px 0;
+      padding: 25px;
+      background: #ecfdf5;
+      border-radius: 16px;
+      border: 3px solid #34d399;
+    }
+    .abono-item {
+      font-size: 20px;
+      font-weight: 600;
+      color: #166534;
+      margin: 10px 0;
+    }
+    .abono-total {
+      font-size: 28px;
+      font-weight: 900;
+      color: #166534;
+      margin-top: 18px;
+      text-align: right;
+    }
+    .progress-tracker { margin: 50px 0; }
+    .progress-steps { display: flex; justify-content: space-between; position: relative; }
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      z-index: 0;
+    }
+    .step { flex: 1; text-align: center; position: relative; z-index: 1; }
+    .step-circle {
+      width: 48px; height: 48px; border-radius: 50%; background: #e5e7eb;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+      font-weight: 900; font-size: 20px; color: #6b7280;
+    }
+    .step.active .step-circle, .step.completed .step-circle { background: #10b981; color: white; }
+    .step-label { font-size: 14px; color: #4b5563; font-weight: 600; }
+    .step.active .step-label { font-weight: 800; color: #1e40af; }
+    .footer {
+      background: #f8fafc;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .footer-thanks {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 25px;
+    }
+    .footer-logo {
+      width: 140px;
+      height: auto;
+      margin: 25px auto;
+    }
+    .footer-address {
+      font-size: 16px;
+      color: #4b5563;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* IMPRESIÓN: A4 portrait (21 x 29.7 cm) con márgenes más ajustados */
+    @media print {
+      body { 
+        background: white; 
+        padding: 0; 
+        margin: 0; 
+      }
+      .ticket { 
+        box-shadow: none; 
+        border: none; 
+        border-radius: 0; 
+        width: 100%; 
+        max-width: none; 
+      }
+      @page { 
+        size: A4 portrait; 
+        margin: 8mm;  /* Márgenes más pequeños para aprovechar mejor el espacio */
+      }
+    }
+  </style>
+</head>
+<body onload="window.print()">
+  <div class="ticket">
+    <div class="header">
+      <img src="/static/neopixel_lOGIN.png" class="header-logo" alt="Neopixel">
+      <div class="header-folio">
+        Ticket #{{ "%04d"|format(venta.id) }}
+      </div>
+      <!-- FECHA Y HORA EN HORA LOCAL DE VERACRUZ -->
+      <div class="header-date">
+        {% set meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'] %}
+        {% set hora_utc = venta.fecha.hour %}
+        {% set hora_local = hora_utc - 6 %}
+        {% if hora_local < 0 %}{% set hora_local = hora_local + 24 %}{% endif %}
+        {{ venta.fecha.day }} de {{ meses[venta.fecha.month - 1] }} de {{ venta.fecha.year }} • {{ "%02d"|format(hora_local) }}:{{ "%02d"|format(venta.fecha.minute) }}
+      </div>
+      <div class="qr-container">
+        <img src="data:image/png;base64,{{ qr }}" class="qr-img" alt="Estatus del pedido">
+      </div>
+    </div>
+    <div class="body">
+      <div class="cliente-nombre">
+        <p>{{ venta.cliente.nombre }}</p>
+      </div>
+      {% if venta.cliente.telefono %}
+        <p class="text-center text-xl text-gray-700 mb-10"><strong>Teléfono:</strong> {{ venta.cliente.telefono }}</p>
+      {% endif %}
+      <table>
+        <tr>
+          <th>Producto</th>
+          <th class="text-right">Cant.</th>
+          <th class="text-right">Importe</th>
+          <th class="text-right">Total</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+          <td class="font-semibold">{{ item.producto.nombre }}</td>
+          <td class="text-right font-bold">{{ item.cantidad }}</td>
+          <td class="text-right">${{ "{:,.0f}".format(item.precio) }}</td>
+          <td class="text-right font-bold text-blue-700">${{ "{:,.0f}".format(item.cantidad * item.precio) }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <div class="mt-10 pt-8 border-t-4 border-dashed border-blue-300">
+        <table class="w-full">
+          <tr>
+            <td class="total-row text-left">TOTAL</td>
+            <td class="total-row text-right">${{ "{:,.0f}".format(venta.total) }}</td>
+          </tr>
+        </table>
+        {% if venta.abonos %}
+        <div class="abonos-list">
+          <p class="text-2xl font-black text-green-800 text-center mb-5">Anticipos registrados</p>
+          {% for abono in venta.abonos %}
+            <div class="abono-item text-center">
+              {{ {'efectivo':'Efectivo', 'transferencia':'Transferencia', 'deposito':'Depósito', 'combinado':'Combinado'}.get(abono.metodo_pago, 'Efectivo') }}: ${{ "{:,.0f}".format(abono.monto) }}
+            </div>
+          {% endfor %}
+          <div class="abono-total">
+            Total abonado: ${{ "{:,.0f}".format(venta.abonado) }}
+          </div>
+        </div>
+        {% endif %}
+        <div class="metodo-pago">
+          Método general: {{ {'efectivo':'EFECTIVO', 'transferencia':'TRANSFERENCIA', 'deposito':'DEPÓSITO', 'combinado':'COMBINADO'}.get(venta.metodo_pago, 'EFECTIVO') }}
+        </div>
+        <div class="text-center mt-10">
+          {% if venta.estado == 'pagado' %}
+            <div class="status-paid">PAGADO COMPLETO</div>
+          {% else %}
+            <div class="status-pending">PENDIENTE: ${{ "{:,.0f}".format(venta.total - venta.abonado) }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="progress-tracker">
+        <h3 class="text-center text-2xl font-black text-blue-900 mb-10">Seguimiento del Pedido</h3>
+        <div class="progress-steps">
+          {% set pasos = ['Pedido', 'Revisión de Diseño', 'Diseño Autorizado', 'Producción', 'Listo para Entrega', 'Entregado'] %}
+          {% set estatus_actual = venta.estatus_pedido | default('Pedido') %}
+          {% for paso in pasos %}
+            <div class="step {% if pasos.index(paso) < pasos.index(estatus_actual) %}completed{% elif paso == estatus_actual %}active{% endif %}">
+              <div class="step-circle">{{ loop.index }}</div>
+              <div class="step-label">{{ paso }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p class="footer-thanks">¡Gracias por su compra!</p>
+      <img src="/static/logo_color_rbg.png" class="footer-logo" alt="Logo">
+      <div class="footer-address">
+        <p>Calle Sur 11 #221 entre Avs 1 y 3</p>
+        <p>Huatusco, Veracruz, México</p>
+        <p>Tel: +52 273 120 8373</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

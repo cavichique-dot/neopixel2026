@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 py-16">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <!-- Header azul rey -->
+            <div class="bg-blue-600 text-white text-center py-16 px-8">
+                <h1 class="text-6xl font-black">EDITAR PRODUCTO</h1>
+                <p class="text-4xl font-bold mt-6">{{ producto.nombre.upper() }}</p>
+            </div>
+
+            <form method="POST" class="p-12 space-y-12">
+                <!-- Nombre -->
+                <div>
+                    <label class="text-2xl font-black text-blue-900 block mb-4">Nombre del producto</label>
+                    <input type="text" name="nombre" value="{{ producto.nombre }}" 
+                           class="w-full px-10 py-8 rounded-3xl border-4 border-blue-200 text-3xl font-black text-blue-900 focus:border-blue-600 focus:outline-none" required>
+                </div>
+
+                <!-- Precio -->
+                <div>
+                    <label class="text-2xl font-black text-blue-900 block mb-4">Precio</label>
+                    <input type="number" step="0.01" name="precio" value="{{ producto.precio }}" 
+                           class="w-full px-10 py-8 rounded-3xl border-4 border-green-200 text-4xl font-black text-center text-green-700 focus:border-green-600 focus:outline-none" required>
+                </div>
+
+                <!-- Stock -->
+                <div>
+                    <label class="text-2xl font-black text-blue-900 block mb-4">Stock disponible</label>
+                    <input type="number" name="stock" value="{{ producto.stock }}" 
+                           class="w-full px-10 py-8 rounded-3xl border-4 border-orange-200 text-4xl font-black text-center text-orange-700 focus:border-orange-600 focus:outline-none" min="0" required>
+                </div>
+
+                <!-- Botones más sutiles y elegantes (como en tus tickets) -->
+                <div class="flex justify-center gap-8 pt-10">
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-20 py-7 rounded-full font-black text-3xl shadow-xl hover:shadow-green-500/50 transition transform hover:scale-105">
+                        GUARDAR
+                    </button>
+                    <a href="{{ url_for('sales.productos') }}" 
+                       class="bg-gray-600 hover:bg-gray-700 text-white px-16 py-7 rounded-full font-black text-3xl shadow-xl transition transform hover:scale-105">
+                        CANCELAR
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

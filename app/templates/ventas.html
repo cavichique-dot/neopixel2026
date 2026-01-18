@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-4 md:p-8 max-w-full">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <h2 class="text-4xl md:text-5xl font-black text-cyan-400">VENTAS</h2>
+    <a href="/exportar" class="btn text-xl md:text-2xl px-8 py-4 whitespace-nowrap">EXPORTAR EXCEL</a>
+  </div>
+  <!-- LEYENDA DEL SEGUIMIENTO – NUEVA SECCIÓN -->
+  <div class="mb-8 p-6 bg-gradient-to-r from-blue-900/50 to-cyan-900/50 rounded-xl border border-cyan-600 shadow-lg">
+    <h3 class="text-2xl font-black text-cyan-300 mb-4 text-center">Significado del Seguimiento del Pedido</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-white">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xl shadow-md">1</div>
+        <span class="font-medium">Pedido recibido</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-gray-600 text-white font-bold flex items-center justify-center text-xl shadow-md">2</div>
+        <span class="font-medium">Revisión de Diseño</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-gray-600 text-white font-bold flex items-center justify-center text-xl shadow-md">3</div>
+        <span class="font-medium">Diseño Autorizado</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-gray-600 text-white font-bold flex items-center justify-center text-xl shadow-md">4</div>
+        <span class="font-medium">En Producción</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-gray-600 text-white font-bold flex items-center justify-center text-xl shadow-md">5</div>
+        <span class="font-medium">Listo para Entrega</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xl shadow-md">6</div>
+        <span class="font-medium">Entregado al cliente</span>
+      </div>
+    </div>
+    <p class="text-center text-cyan-200 text-sm mt-4">El número en verde indica el estatus actual del pedido</p>
+  </div>
+  <div class="overflow-x-auto -mx-4 md:mx-0">
+    <div class="inline-block min-w-full align-middle">
+      <div class="overflow-hidden rounded-xl shadow-2xl border border-slate-700">
+        <table class="min-w-full divide-y divide-slate-700">
+          <thead class="bg-gradient-to-r from-cyan-600 to-blue-700">
+            <tr>
+              <th class="px-4 py-4 text-left text-sm font-bold text-white">#</th>
+              <th class="px-4 py-4 text-left text-sm font-bold text-white">Fecha</th>
+              <th class="px-4 py-4 text-left text-sm font-bold text-white">Cliente</th>
+              <th class="px-4 py-4 text-right text-sm font-bold text-white">Total</th>
+              <th class="px-4 py-4 text-right text-sm font-bold text-white">Abonado</th>
+              <th class="px-4 py-4 text-center text-sm font-bold text-white">Estado</th>
+              <th class="px-4 py-4 text-center text-sm font-bold text-white">Seguimiento</th>
+              <th class="px-4 py-4 text-center text-sm font-bold text-white">Entregado</th>
+              <th class="px-4 py-4 text-center text-sm font-bold text-white">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            {% for v in ventas %}
+            <tr class="hover:bg-slate-700/50 transition">
+              <td class="px-4 py-4 font-bold text-xl">#{{ v.id }}</td>
+              <td class="px-4 py-4 text-sm md:text-base">{{ v.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+              <td class="px-4 py-5">
+                <div class="font-bold text-lg text-white leading-tight max-w-56 break-words">
+                  {{ v.cliente.nombre }}
+                </div>
+              </td>
+              <td class="px-4 py-4 text-right font-bold text-xl text-cyan-400">${{ "%d"|format(v.total) }}</td>
+              <td class="px-4 py-4 text-right text-green-400 font-medium">${{ "%d"|format(v.abonado) }}</td>
+              <td class="px-4 py-4 text-center">
+                <span class="px-4 py-2 rounded-full text-xs font-bold {% if v.estado == 'pagado' %}bg-emerald-600{% else %}bg-orange-600{% endif %}">
+                  {{ 'PAGADO' if v.estado == 'pagado' else 'PENDIENTE' }}
+                </span>
+              </td>
+              <!-- SEGUIMIENTO CON BOTONES -->
+              <td class="px-4 py-4 text-center">
+                <div class="flex justify-center gap-2 flex-wrap">
+                  {% set pasos = ['Pedido', 'Revisión de Diseño', 'Diseño Autorizado', 'Producción', 'Listo para Entrega', 'Entregado'] %}
+                  {% for paso in pasos %}
+                    <form action="{{ url_for('sales.actualizar_estatus', id=v.id, estatus=paso) }}" method="POST" style="display:inline;">
+                      <button type="submit"
+                              class="w-10 h-10 rounded-full font-bold text-sm transition transform hover:scale-110 active:scale-95 shadow-md
+                              {% if v.estatus_pedido == paso %}
+                                bg-emerald-500 text-white ring-4 ring-emerald-300
+                              {% else %}
+                                bg-slate-600 text-slate-300 hover:bg-slate-500
+                              {% endif %}">
+                        {{ loop.index }}
+                      </button>
+                    </form>
+                  {% endfor %}
+                </div>
+              </td>
+              <!-- ENTREGADO -->
+              <td class="px-4 py-4 text-center">
+                {% if v.entregado %}
+                  <div class="inline-flex items-center gap-2 bg-green-900/40 px-5 py-2.5 rounded-full">
+                    <svg class="w-7 h-7 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-green-300 font-bold text-sm">ENTREGADO</span>
+                  </div>
+                {% else %}
+                  <form action="{{ url_for('sales.marcar_entregado', id=v.id) }}" method="POST" class="inline">
+                    <button type="submit" class="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold px-7 py-3 rounded-full text-base transition transform hover:scale-105 active:scale-95 shadow-lg whitespace-nowrap">
+                      Marcar entregado
+                    </button>
+                  </form>
+                {% endif %}
+              </td>
+              <!-- ACCIONES -->
+              <td class="px-4 py-4 text-center">
+                <div class="flex flex-col gap-3 text-sm">
+                  <a href="/ticket/{{ v.id }}" target="_blank" class="text-cyan-400 hover:text-cyan-200 font-medium transition">Ticket</a>
+                  <a href="/venta/{{ v.id }}/abonar" class="text-green-400 hover:text-green-300 font-medium transition">Abonar</a>
+                  <a href="/venta/{{ v.id }}/editar" class="text-yellow-400 hover:text-yellow-300 font-medium transition">Editar</a>
+                  <!-- BOTÓN CANCELAR CORREGIDO: ahora lleva a la página de confirmación -->
+                  <a href="{{ url_for('sales.cancelar_venta', id=v.id) }}"
+                     class="text-red-400 hover:text-red-200 font-bold transition underline">
+                    Cancelar
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% if ventas|length == 0 %}
+  <div class="text-center py-20 text-2xl text-slate-500">
+    No hay ventas registradas aún
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

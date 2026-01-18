@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Cancelar Venta #{{ venta.id }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="bg-white p-10 rounded-2xl shadow-2xl max-w-md w-full">
+      <h1 class="text-3xl font-black text-red-600 text-center mb-6">
+        ¿Cancelar Venta #{{ "%04d"|format(venta.id) }}?
+      </h1>
+      
+      <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded mb-8">
+        <p class="text-lg font-semibold text-gray-800">Cliente:</p>
+        <p class="text-2xl font-bold text-blue-900 mb-4">{{ venta.cliente.nombre }}</p>
+        
+        <p class="text-lg font-semibold text-gray-800">Total:</p>
+        <p class="text-3xl font-bold text-red-600">${{ "{:,.0f}".format(venta.total) }}</p>
+        
+        <p class="text-sm text-gray-600 mt-4">
+          Esta acción eliminará la venta, sus ítems y abonos. <br>
+          <strong>No se podrá deshacer.</strong>
+        </p>
+      </div>
+
+      <div class="flex gap-4">
+        <form method="POST" class="flex-1">
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl transition">
+            Sí, cancelar venta
+          </button>
+        </form>
+        
+        <a href="{{ url_for('sales.ventas') }}" class="flex-1">
+          <button type="button" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-xl transition">
+            No, volver atrás
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

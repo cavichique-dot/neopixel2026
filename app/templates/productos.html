@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-4 md:p-8 max-w-full">
+  <!-- Header + Botón nuevo + Búsqueda -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+    <h2 class="text-5xl md:text-6xl font-black text-cyan-400 tracking-tight">PRODUCTOS</h2>
+    
+    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+      <!-- Barra de búsqueda CORREGIDA: texto visible -->
+      <input type="text" id="buscarProducto" placeholder="Buscar producto por nombre..." 
+             class="px-6 py-4 text-lg rounded-full border-2 border-slate-300 focus:border-cyan-500 focus:outline-none shadow-md w-full sm:w-96
+                    bg-white text-gray-900 placeholder-gray-500">
+      
+      <!-- Botón nuevo producto -->
+      <a href="/producto/nuevo" 
+         class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 
+                text-white font-black text-xl px-10 py-4 rounded-full shadow-lg text-center
+                transition transform hover:scale-105 active:scale-95 whitespace-nowrap">
+        + NUEVO
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabla de productos -->
+  <div class="overflow-x-auto -mx-4 md:mx-0">
+    <div class="inline-block min-w-full align-middle">
+      <div class="overflow-hidden rounded-xl shadow-2xl border border-slate-700">
+        <table class="min-w-full divide-y divide-slate-700" id="tablaProductos">
+          <thead class="bg-gradient-to-r from-cyan-600 to-blue-700">
+            <tr>
+              <th class="px-6 py-5 text-left text-lg font-bold text-white">Nombre del Producto</th>
+              <th class="px-6 py-5 text-center text-lg font-bold text-white">Precio</th>
+              <th class="px-6 py-5 text-center text-lg font-bold text-white">Stock</th>
+              <th class="px-6 py-5 text-center text-lg font-bold text-white">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700" id="filasProductos">
+            {% for p in productos %}
+            <tr class="hover:bg-slate-700/50 transition">
+              <td class="px-6 py-6 text-lg font-semibold text-white">
+                {{ p.nombre }}
+              </td>
+              <td class="px-6 py-6 text-center text-2xl font-bold text-cyan-400">
+                ${{ "{:,.0f}".format(p.precio) }}
+              </td>
+              <td class="px-6 py-6 text-center">
+                <span class="inline-flex items-center gap-3 px-6 py-3 rounded-full text-xl font-black
+                             {% if p.stock > 10 %}bg-emerald-600/30 text-emerald-400 border-2 border-emerald-600
+                             {% elif p.stock > 0 %}bg-orange-600/30 text-orange-400 border-2 border-orange-600
+                             {% else %}bg-red-600/30 text-red-400 border-2 border-red-600{% endif %}">
+                  {% if p.stock == 0 %}AGOTADO{% else %}{{ p.stock }}{% endif %}
+                </span>
+              </td>
+              <td class="px-6 py-6 text-center">
+                <div class="flex justify-center gap-4">
+                  <a href="/producto/{{ p.id }}/editar"
+                     class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-full text-base shadow-md transition">
+                    Editar
+                  </a>
+                  <form action="/producto/{{ p.id }}/eliminar" method="POST" class="inline">
+                    <button type="submit"
+                            onclick="return confirm('¿Eliminar permanentemente «{{ p.nombre }}»?')"
+                            class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-full text-base shadow-md transition">
+                      Eliminar
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay productos -->
+  {% if productos|length == 0 %}
+  <div class="text-center py-32">
+    <div class="bg-white/80 backdrop-blur rounded-3xl p-20 max-w-3xl mx-auto shadow-2xl border-4 border-dashed border-cyan-300">
+      <h3 class="text-5xl md:text-6xl font-black text-slate-700 mb-8">
+        No hay productos registrados
+      </h3>
+      <p class="text-2xl text-slate-600 mb-12">
+        Agrega tu primer producto para comenzar
+      </p>
+      <a href="/producto/nuevo" 
+         class="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black text-3xl px-16 py-8 rounded-full shadow-xl transition transform hover:scale-105">
+        + Agregar producto
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Script para búsqueda en tiempo real -->
+<script>
+  document.getElementById('buscarProducto').addEventListener('input', function() {
+    const filtro = this.value.toLowerCase();
+    const filas = document.querySelectorAll('#filasProductos tr');
+    
+    filas.forEach(fila => {
+      const nombre = fila.querySelector('td:first-child').textContent.toLowerCase();
+      if (nombre.includes(filtro)) {
+        fila.style.display = '';
+      } else {
+        fila.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}
