@@ -1,8 +1,9 @@
-# app/routes/sales.py → VERSIÓN FINAL CON CANCELACIÓN SEGURA Y CONFIRMACIÓN
+# app/routes/sales.py → VERSIÓN FINAL CON FIX PARA TICKET (datos siempre actualizados)
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from app.models import Cliente, Producto, Venta, ItemVenta, Abono, db
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 import qrcode
 import base64
 from io import BytesIO
@@ -154,7 +155,10 @@ def nueva_venta():
 @sales_bp.route('/ticket/<int:id>')
 @login_required
 def ticket(id):
-    venta = Venta.query.get_or_404(id)
+    # FIX: carga datos frescos y evita caché
+    venta = Venta.query.options(joinedload(Venta.abonos)).get_or_404(id)
+    db.session.refresh(venta)  # Fuerza recargar desde DB los cambios más recientes
+    
     items = ItemVenta.query.filter_by(venta_id=id).all()
     estatus_actual = getattr(venta, 'estatus_pedido', 'Pedido') or 'Pedido'
     texto_qr = f"Estatus del pedido:\n{estatus_actual}"
@@ -238,22 +242,17 @@ def editar_venta(id):
         return redirect(url_for('sales.ventas'))
     return render_template('editar_venta.html', venta=venta, items=items, clientes=Cliente.query.all(), productos=Producto.query.all())
 
-# ======================= CANCELAR VENTA (CORREGIDA Y SEGURA) =======================
 @sales_bp.route('/venta/<int:id>/cancelar', methods=['GET', 'POST'])
 @login_required
 def cancelar_venta(id):
     venta = Venta.query.get_or_404(id)
-    
     if request.method == 'POST':
-        # Borra ítems, abonos y finalmente la venta
         ItemVenta.query.filter_by(venta_id=id).delete()
         Abono.query.filter_by(venta_id=id).delete()
         db.session.delete(venta)
         db.session.commit()
         flash(f'VENTA #{id} CANCELADA correctamente', 'warning')
         return redirect(url_for('sales.ventas'))
-    
-    # Si es GET: muestra la página de confirmación que ya creaste
     return render_template('confirmar_cancelar.html', venta=venta)
 
 @sales_bp.route('/venta/<int:id>/entregar', methods=['POST'])
