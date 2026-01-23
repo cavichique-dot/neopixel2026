@@ -1,5 +1,10 @@
-# api/index.py
-from app import app  # ← importa tu app Flask (ajusta la ruta si tu estructura es diferente)
+# api/index.py - Punto de entrada OBLIGATORIO para Vercel
 
-# Esto es lo que Vercel necesita para detectar tu app Flask
-app = app  # Vercel lo usa como punto de entrada WSGI
+# Importamos la función que crea la app
+from app import create_app
+
+# Creamos la instancia de Flask (esto es lo que Vercel necesita)
+app = create_app()
+
+# Vercel usa 'application' como entrypoint WSGI
+application = app

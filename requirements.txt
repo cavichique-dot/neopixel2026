@@ -1,9 +1,9 @@
 flask
 flask-sqlalchemy
 flask-login
+flask-migrate
 sqlalchemy
 qrcode[pil]
 pillow
 gunicorn
 psycopg2-binary
-flask-migrate
