@@ -1,7 +1,8 @@
-Flask==2.3.3
-Flask-Login==0.6.3
-Flask-SQLAlchemy==3.0.5
-Flask-Migrate==4.0.5
-qrcode[pil]==7.4.2
-Werkzeug==2.3.7
-gunicorn==21.2.0
+flask
+flask-sqlalchemy
+flask-login
+sqlalchemy
+qrcode[pil]
+pillow
+gunicorn
+psycopg2-binary
